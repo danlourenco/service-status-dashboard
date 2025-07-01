@@ -324,7 +324,7 @@ src/
 │   └── index.ts                  # TypeScript interfaces
 ├── utils/
 │   ├── config.ts                 # Configuration helpers (using UnJS utils)
-│   └── http.ts                   # TanStack Query setup with ofetch client
+│   └── http.ts                   # TanStack Query setup with native fetch
 └── App.tsx                       # Root component
 ```
 
@@ -339,7 +339,7 @@ We chose **Zustand** for its simplicity and minimal boilerplate. For this monito
 
 Zustand's straightforward API is perfect for these simple UI state needs.
 
-### Data Fetching Choice: TanStack Query + ofetch
+### Data Fetching Choice: TanStack Query + Native Fetch
 
 We chose **TanStack Query** for managing service health checks because it provides:
 - **Automatic background refetching**: Essential for real-time monitoring at 30-second intervals
@@ -349,11 +349,11 @@ We chose **TanStack Query** for managing service health checks because it provid
 - **Built-in retry logic**: Automatic exponential backoff for failed requests
 - **Focus refetching**: Updates data when users return to the tab
 
-We use **ofetch** as the fetch client within TanStack Query for:
-- Better error handling with automatic retries
-- Cleaner API with sensible defaults
-- Built-in timeout support
-- Native TypeScript support
+We use **native fetch** as the HTTP client within TanStack Query for:
+- Built-in browser support with no additional dependencies
+- Modern AbortSignal.timeout for request cancellation
+- Standard web API with excellent TypeScript support
+- Lightweight approach without external HTTP client overhead
 
 ### UnJS Ecosystem Choices
 
@@ -372,9 +372,9 @@ We selected specific UnJS packages based on the application's needs:
 - **httpxy**: Development proxy for CORS
   - Handles CORS issues during local development
   - Proxies health check requests to actual services
-- **ofetch**: Modern fetch wrapper
+- **Native Fetch**: Standard web API
   - Used as the HTTP client within TanStack Query
-  - Built-in retry logic and timeout handling
+  - AbortSignal.timeout for request cancellation
 
 ### Code Style
 
