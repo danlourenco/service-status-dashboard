@@ -45,7 +45,7 @@ const ServiceStatusCell: React.FC<ServiceStatusCellProps> = ({
         {status.responseData && (
           <div className="mt-2 pt-2 border-t border-slate-600">
             <div className="text-green-400 font-medium mb-1">📡 Health Response:</div>
-            <pre className="text-xs bg-slate-900/50 p-2 rounded border border-slate-700 overflow-auto max-h-32 whitespace-pre-wrap">
+            <pre className="text-xs bg-slate-900/50 p-2 rounded border border-slate-700 overflow-auto max-h-80 whitespace-pre-wrap">
               {JSON.stringify(status.responseData, null, 2)}
             </pre>
           </div>
