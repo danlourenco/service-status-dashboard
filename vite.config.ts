@@ -42,7 +42,40 @@ const getProxyConfig = () => {
                     target: `${url.protocol}//${url.host}`,
                     changeOrigin: true,
                     rewrite: (path: string) => path.replace(`/api/${host}`, ''),
-                    secure: false
+                    secure: false,
+                    ws: false,
+                    // This is crucial - we need to handle the response ourselves
+                    selfHandleResponse: true,
+                    configure: (proxy) => {
+                      proxy.on('proxyRes', (proxyRes, req, res) => {
+                        // Log for debugging
+                        console.log(`Proxy response for ${req.url}:`, {
+                          statusCode: proxyRes.statusCode,
+                          statusMessage: proxyRes.statusMessage
+                        });
+                        
+                        // Set the status code from the proxied response
+                        res.statusCode = proxyRes.statusCode || 500;
+                        
+                        // Copy all headers
+                        Object.keys(proxyRes.headers).forEach(key => {
+                          res.setHeader(key, proxyRes.headers[key]);
+                        });
+                        
+                        // Pipe the response body
+                        proxyRes.pipe(res);
+                      });
+                      
+                      proxy.on('error', (err, req, res) => {
+                        console.error('Proxy error:', err);
+                        if (!res.headersSent) {
+                          res.writeHead(500, {
+                            'Content-Type': 'text/plain'
+                          });
+                        }
+                        res.end('Proxy error: ' + err.message);
+                      });
+                    }
                   };
                 }
               } catch (e) {

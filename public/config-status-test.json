@@ -1,0 +1,49 @@
+{
+  "app": {
+    "title": "Status Code Test Monitor",
+    "description": "Testing that proxy passes through correct status codes",
+    "refreshInterval": 30000
+  },
+  "services": [
+    {
+      "name": "200 OK",
+      "description": "Should return 200",
+      "timeout": 5000,
+      "expectedStatus": [200]
+    },
+    {
+      "name": "404 Not Found",
+      "description": "Should return 404",
+      "timeout": 5000,
+      "expectedStatus": [404]
+    },
+    {
+      "name": "500 Error",
+      "description": "Should return 500",
+      "timeout": 5000,
+      "expectedStatus": [500]
+    },
+    {
+      "name": "503 Service Unavailable",
+      "description": "Should return 503",
+      "timeout": 5000,
+      "expectedStatus": [503]
+    }
+  ],
+  "instances": {
+    "test": {
+      "name": "Status Code Tests",
+      "environments": {
+        "test": {
+          "name": "Test Environment",
+          "services": {
+            "200 OK": { "url": "https://httpbin.org/status/200" },
+            "404 Not Found": { "url": "https://httpbin.org/status/404" },
+            "500 Error": { "url": "https://httpbin.org/status/500" },
+            "503 Service Unavailable": { "url": "https://httpbin.org/status/503" }
+          }
+        }
+      }
+    }
+  }
+}

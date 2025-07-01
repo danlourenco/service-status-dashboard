@@ -33,6 +33,17 @@ export const checkService = async (service: ServiceConfig, url: string): Promise
     const expectedStatuses = service.expectedStatus || [200];
     const isHealthy = expectedStatuses.includes(response.status);
     
+    // Debug logging in development
+    if (!import.meta.env.PROD) {
+      console.log(`Service check for ${service.name}:`, {
+        originalUrl: url,
+        proxyUrl,
+        status: response.status,
+        statusText: response.statusText,
+        isHealthy
+      });
+    }
+    
     let status: ServiceStatus['status'] = 'operational';
     if (!isHealthy) {
       status = 'outage';

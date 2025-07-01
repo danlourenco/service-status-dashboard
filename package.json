@@ -22,7 +22,6 @@
     "@tanstack/react-query": "^5.81.5",
     "c12": "^3.0.4",
     "consola": "^3.4.2",
-    "httpxy": "^0.1.7",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "zustand": "^5.0.6"

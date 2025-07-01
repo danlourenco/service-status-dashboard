@@ -366,11 +366,6 @@ We selected specific UnJS packages based on the application's needs:
 - **consola**: Enhanced logging for development
   - Better formatted console output
   - Log levels for debugging health checks
-- **httpxy**: Development proxy for CORS
-  - Integrated into Vite dev server for automatic CORS handling
-  - Automatically proxies all service URLs from config.json
-  - Transparent operation - no config changes needed
-  - Only active in development mode
 - **Native Fetch**: Standard web API
   - Used as the HTTP client within TanStack Query
   - AbortSignal.timeout for request cancellation
@@ -404,14 +399,15 @@ Services are monitored via HTTP health checks with:
 
 ### CORS Handling in Development
 
-The application includes automatic CORS proxy support for local development:
+The application includes automatic CORS proxy support for local development using Vite's built-in proxy capabilities:
 
 1. **Automatic Detection**: On startup, Vite reads all service URLs from `config.json`
 2. **Proxy Setup**: Each unique host is mapped to a proxy path (e.g., `api.example.com` → `/api/api.example.com/*`)
-3. **Transparent Rewriting**: The `checkService` function automatically converts URLs to proxy paths in development
-4. **Production Ready**: In production builds, URLs are used as-is without proxying
+3. **Status Code Preservation**: Uses `selfHandleResponse` to ensure original HTTP status codes are passed through
+4. **Transparent Rewriting**: The `checkService` function automatically converts URLs to proxy paths in development
+5. **Production Ready**: In production builds, URLs are used as-is without proxying
 
-This means you can use real service URLs in your config without worrying about CORS during development. The proxy is completely transparent and requires no configuration changes.
+This means you can use real service URLs in your config without worrying about CORS during development. The proxy is completely transparent and requires no configuration changes. Vite's proxy is powered by `http-proxy-middleware` under the hood.
 
 ## Generic Application Instance Model
 
@@ -441,8 +437,7 @@ Each instance can have:
     "zustand": "^5.0.0",
     "@tanstack/react-query": "^5.0.0",
     "c12": "^3.0.0",
-    "consola": "^3.0.0",
-    "httpxy": "^0.1.0"
+    "consola": "^3.0.0"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
