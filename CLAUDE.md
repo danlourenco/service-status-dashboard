@@ -366,9 +366,6 @@ We selected specific UnJS packages based on the application's needs:
 - **consola**: Enhanced logging for development
   - Better formatted console output
   - Log levels for debugging health checks
-- **defu**: Deep object merging
-  - Essential for merging service defaults with instance-specific configs
-  - Type-safe merging with TypeScript
 - **httpxy**: Development proxy for CORS
   - Handles CORS issues during local development
   - Proxies health check requests to actual services
@@ -432,7 +429,6 @@ Each instance can have:
     "@tanstack/react-query": "^5.0.0",
     "c12": "^3.0.0",
     "consola": "^3.0.0",
-    "defu": "^6.0.0",
     "httpxy": "^0.1.0"
   },
   "devDependencies": {

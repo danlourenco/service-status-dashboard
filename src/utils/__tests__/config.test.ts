@@ -102,7 +102,7 @@ describe('config utilities', () => {
       expect(config.instances.custom).toBeDefined();
     });
 
-    it('merges custom config with defaults', async () => {
+    it('does not merge with defaults when custom config exists', async () => {
       const partialConfig = {
         app: {
           title: 'Partial Custom Monitor'
@@ -132,10 +132,10 @@ describe('config utilities', () => {
       expect(config.services[0].timeout).toBe(3000);
       expect(config.services[0].expectedStatus).toEqual([201]);
 
-      // Missing values should be filled with defaults - but custom config replaces entire services array
-      // So we need to check that we still have complete structure
-      expect(config.app.description).toBe('Real-time monitoring across application instances');
-      expect(config.app.refreshInterval).toBe(30000);
+      // Missing values should NOT be filled with defaults - custom config is used as-is
+      expect(config.app.description).toBeUndefined();
+      expect(config.app.refreshInterval).toBeUndefined();
+      expect(config.services).toHaveLength(1);
     });
 
     it('falls back to default config when config.json is not found', async () => {

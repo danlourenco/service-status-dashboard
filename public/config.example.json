@@ -1,0 +1,45 @@
+{
+  "app": {
+    "title": "My Custom Status Monitor",
+    "description": "Monitoring our production services",
+    "refreshInterval": 60000
+  },
+  "services": [
+    {
+      "name": "Web API",
+      "description": "Main REST API",
+      "timeout": 5000,
+      "expectedStatus": [200, 201],
+      "headers": {
+        "Authorization": "Bearer example-token"
+      }
+    },
+    {
+      "name": "Database",
+      "description": "PostgreSQL Database",
+      "timeout": 3000,
+      "expectedStatus": [200]
+    }
+  ],
+  "instances": {
+    "main": {
+      "name": "Main Application",
+      "environments": {
+        "production": {
+          "name": "Production",
+          "services": {
+            "Web API": { "url": "https://api.example.com/health" },
+            "Database": { "url": "https://db.example.com/status" }
+          }
+        },
+        "staging": {
+          "name": "Staging",
+          "services": {
+            "Web API": { "url": "https://api-staging.example.com/health" },
+            "Database": { "url": "https://db-staging.example.com/status" }
+          }
+        }
+      }
+    }
+  }
+}

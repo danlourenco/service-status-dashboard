@@ -1,4 +1,3 @@
-import { defu } from 'defu';
 import type { ConfigData } from '../types';
 
 export const getDefaultConfig = (): ConfigData => ({
@@ -174,8 +173,8 @@ export const loadConfiguration = async (): Promise<ConfigData> => {
     }
     const configData = await response.json();
     
-    // Merge with defaults to ensure all required fields exist
-    return defu(configData, getDefaultConfig()) as ConfigData;
+    // If any valid config exists, use it completely without merging defaults
+    return configData as ConfigData;
   } catch (error) {
     console.warn('Error loading config file:', error);
     return getDefaultConfig();

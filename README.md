@@ -22,7 +22,7 @@ A React-based service status monitoring application for multi-instance environme
 - **Build Tool**: Vite 7
 - **Testing**: Vitest with React Testing Library and MSW
 - **Configuration**: c12 for JSON/YAML config loading
-- **Utilities**: UnJS ecosystem (consola, defu, httpxy)
+- **Utilities**: UnJS ecosystem (consola, httpxy)
 
 ## Quick Start
 
