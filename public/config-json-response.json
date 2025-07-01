@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "JSON Response Test Monitor",
+    "description": "Testing JSON response data capture from health endpoints",
+    "refreshInterval": 30000
+  },
+  "services": [
+    {
+      "name": "JSONPlaceholder API",
+      "description": "Returns JSON user data",
+      "timeout": 5000,
+      "expectedStatus": [200]
+    },
+    {
+      "name": "HTTPBin JSON",
+      "description": "Returns JSON response with request info",
+      "timeout": 5000,
+      "expectedStatus": [200]
+    },
+    {
+      "name": "Simple Status",
+      "description": "Returns simple status code without JSON",
+      "timeout": 5000,
+      "expectedStatus": [200]
+    }
+  ],
+  "instances": {
+    "test": {
+      "name": "JSON Response Tests",
+      "environments": {
+        "demo": {
+          "name": "Demo Environment",
+          "services": {
+            "JSONPlaceholder API": { "url": "https://jsonplaceholder.typicode.com/users/1" },
+            "HTTPBin JSON": { "url": "https://httpbin.org/json" },
+            "Simple Status": { "url": "https://httpbin.org/status/200" }
+          }
+        }
+      }
+    }
+  }
+}

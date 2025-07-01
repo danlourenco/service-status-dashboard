@@ -41,10 +41,10 @@ export interface ConfigData {
 export interface ServiceStatus {
   status: 'operational' | 'degraded' | 'outage' | 'unknown';
   responseTime: number;
-  uptime: number;
   lastChecked: string;
   statusCode?: number;
   error?: string;
+  responseData?: any; // JSON response data from successful health checks
 }
 
 export type ServiceStatusMap = Record<string, Record<string, ServiceStatus>>; // [instance-env][serviceName]

@@ -40,7 +40,6 @@ describe('checkService', () => {
 
     expect(result.status).toBe('operational');
     expect(result.statusCode).toBe(200);
-    expect(result.uptime).toBe(99.9);
     expect(result.responseTime).toBeGreaterThan(0);
     expect(result.responseTime).toBeLessThan(2000);
     expect(result.lastChecked).toBeTruthy();
@@ -60,7 +59,6 @@ describe('checkService', () => {
 
     expect(result.status).toBe('degraded');
     expect(result.statusCode).toBe(200);
-    expect(result.uptime).toBe(99.9);
     expect(result.responseTime).toBeGreaterThanOrEqual(1500);
   });
 
@@ -75,7 +73,6 @@ describe('checkService', () => {
 
     expect(result.status).toBe('outage');
     expect(result.statusCode).toBe(500);
-    expect(result.uptime).toBe(0);
     expect(result.responseTime).toBeGreaterThan(0);
   });
 
@@ -95,7 +92,6 @@ describe('checkService', () => {
 
     expect(result.status).toBe('operational');
     expect(result.statusCode).toBe(201);
-    expect(result.uptime).toBe(99.9);
   });
 
   it('handles network errors', async () => {
@@ -108,7 +104,6 @@ describe('checkService', () => {
     const result = await checkService(baseService, 'https://api.test.com/health');
 
     expect(result.status).toBe('outage');
-    expect(result.uptime).toBe(0);
     expect(result.error).toBeTruthy();
     expect(result.responseTime).toBeGreaterThan(0);
   });
@@ -126,7 +121,6 @@ describe('checkService', () => {
     const result = await checkService(timeoutService, 'https://api.test.com/health');
 
     expect(result.status).toBe('outage');
-    expect(result.uptime).toBe(0);
     expect(result.error).toBeTruthy();
     expect(result.responseTime).toBeGreaterThanOrEqual(1000);
   });
@@ -223,6 +217,72 @@ describe('checkService', () => {
 
     expect(result.status).toBe('operational');
     expect(result.statusCode).toBe(200);
+  });
+
+  it('captures JSON response data for successful 200 responses', async () => {
+    const jsonData = { status: 'healthy', version: '1.0.0', timestamp: '2023-01-01T00:00:00Z' };
+    
+    server.use(
+      http.get('https://api.test.com/health', () => {
+        return HttpResponse.json(jsonData, { status: 200 });
+      })
+    );
+
+    const result = await checkService(baseService, 'https://api.test.com/health');
+
+    expect(result.status).toBe('operational');
+    expect(result.statusCode).toBe(200);
+    expect(result.responseData).toEqual(jsonData);
+  });
+
+  it('does not capture response data for non-200 status codes', async () => {
+    const jsonData = { error: 'Internal server error' };
+    
+    server.use(
+      http.get('https://api.test.com/health', () => {
+        return HttpResponse.json(jsonData, { status: 500 });
+      })
+    );
+
+    const result = await checkService(baseService, 'https://api.test.com/health');
+
+    expect(result.status).toBe('outage');
+    expect(result.statusCode).toBe(500);
+    expect(result.responseData).toBeUndefined();
+  });
+
+  it('does not capture response data for non-JSON content', async () => {
+    server.use(
+      http.get('https://api.test.com/health', () => {
+        return new HttpResponse('OK', { 
+          status: 200,
+          headers: { 'Content-Type': 'text/plain' }
+        });
+      })
+    );
+
+    const result = await checkService(baseService, 'https://api.test.com/health');
+
+    expect(result.status).toBe('operational');
+    expect(result.statusCode).toBe(200);
+    expect(result.responseData).toBeUndefined();
+  });
+
+  it('handles invalid JSON gracefully', async () => {
+    server.use(
+      http.get('https://api.test.com/health', () => {
+        return new HttpResponse('{ invalid json', { 
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      })
+    );
+
+    const result = await checkService(baseService, 'https://api.test.com/health');
+
+    expect(result.status).toBe('operational');
+    expect(result.statusCode).toBe(200);
+    expect(result.responseData).toBeUndefined();
   });
 
   describe('proxy URL conversion in development', () => {

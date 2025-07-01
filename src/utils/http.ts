@@ -51,12 +51,25 @@ export const checkService = async (service: ServiceConfig, url: string): Promise
       status = 'degraded';
     }
     
+    // Try to capture JSON response data for successful 200 responses
+    let responseData;
+    if (response.status === 200 && isHealthy) {
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          responseData = await response.json();
+        }
+      } catch (e) {
+        // If JSON parsing fails, ignore - don't fail the health check
+      }
+    }
+    
     return {
       status,
       responseTime,
-      uptime: isHealthy ? 99.9 : 0,
       lastChecked: new Date().toLocaleTimeString(),
-      statusCode: response.status
+      statusCode: response.status,
+      responseData
     };
     
   } catch (error) {
@@ -65,7 +78,6 @@ export const checkService = async (service: ServiceConfig, url: string): Promise
     return {
       status: 'outage',
       responseTime,
-      uptime: 0,
       lastChecked: new Date().toLocaleTimeString(),
       error: (error as Error).message
     };
