@@ -430,7 +430,6 @@ Each instance can have:
     "react-dom": "^19.0.0",
     "zustand": "^5.0.0",
     "@tanstack/react-query": "^5.0.0",
-    "ofetch": "^1.0.0",
     "c12": "^3.0.0",
     "consola": "^3.0.0",
     "defu": "^6.0.0",
@@ -447,16 +446,47 @@ Each instance can have:
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.0.0",
     "msw": "^2.0.0",
-    "jsdom": "^26.0.0"
+    "jsdom": "^26.0.0",
+    "changelogen": "^0.6.0"
   }
 }
 ```
+
+## Version Management & Releases
+
+This project uses semantic versioning with automated changelog generation:
+
+### Release Commands
+```bash
+npm run release          # Patch release (0.1.0 → 0.1.1)
+npm run release:patch    # Patch release (0.1.0 → 0.1.1)
+npm run release:minor    # Minor release (0.1.0 → 0.2.0)
+npm run release:major    # Major release (0.1.0 → 1.0.0)
+```
+
+### Release Process
+Each release command will:
+1. Bump the version in package.json using npm version
+2. Generate/update CHANGELOG.md using changelogen
+3. Commit the changes with a release tag
+4. Push to remote origin with tags
+
+### Changelog Generation
+- Uses **changelogen** (UnJS) for automatic changelog generation
+- Parses git commits to create structured changelogs
+- Generates comparison links between versions
+- Follows conventional commit standards
+
+### Git Workflow
+- Remote origin: https://github.com/danlourenco/service-status-dashboard.git
+- Automatic pushing with `--follow-tags` to include version tags
+- Handles initial upstream setup automatically
 
 ## Getting Started
 
 1. Initialize project with Vite + React + TypeScript
 2. Install preferred state management library (Zustand/Jotai)
-3. Set up HTTP client (ofetch/TanStack Query)
+3. Set up HTTP client (native fetch/TanStack Query)
 4. Install relevant UnJS packages
 5. Configure Tailwind CSS with dark theme
 6. Set up project structure as outlined above
