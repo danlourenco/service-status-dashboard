@@ -23,13 +23,13 @@ const ServiceStatusCell: React.FC<ServiceStatusCellProps> = ({
         <div className="flex items-center gap-2">
           <StatusIndicator status={status.status} />
           <span className="text-sm font-medium text-slate-300">{service.name}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-500">{status.responseTime}ms</span>
           {status.responseData && (
-            <span className="text-xs bg-green-900/30 text-green-400 px-1.5 py-0.5 rounded border border-green-500/30" title="Health data available">
-              📡
-            </span>
+            <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" title="Response data available"></div>
           )}
         </div>
-        <span className="text-xs text-slate-500">{status.responseTime}ms</span>
       </div>
       
       {/* Tooltip on hover */}
