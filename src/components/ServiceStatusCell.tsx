@@ -33,7 +33,7 @@ const ServiceStatusCell: React.FC<ServiceStatusCellProps> = ({
       </div>
       
       {/* Tooltip on hover */}
-      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-xs text-slate-200 opacity-0 group-hover:opacity-100 transition-opacity z-10 max-w-md">
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-xs text-slate-200 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 max-w-sm">
         <div><strong>{instance} - {environment}</strong></div>
         <div>{service.description}</div>
         {url && <div>Endpoint: {url}</div>}
@@ -45,7 +45,7 @@ const ServiceStatusCell: React.FC<ServiceStatusCellProps> = ({
         {status.responseData && (
           <div className="mt-2 pt-2 border-t border-slate-600">
             <div className="text-green-400 font-medium mb-1">📡 Health Response:</div>
-            <pre className="text-xs bg-slate-900/50 p-2 rounded border border-slate-700 overflow-auto max-h-48 whitespace-pre-wrap">
+            <pre className="text-xs bg-slate-900/50 p-2 rounded border border-slate-700 overflow-auto max-h-32 whitespace-pre-wrap">
               {JSON.stringify(status.responseData, null, 2)}
             </pre>
           </div>
