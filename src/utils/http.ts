@@ -1,9 +1,9 @@
 import type { ServiceConfig, ServiceStatus } from '../types';
 
-// Convert external URLs to proxy URLs in development
-const getProxyUrl = (originalUrl: string): string => {
+// Export for testing
+export const getProxyUrl = (originalUrl: string, isProduction = import.meta.env.PROD): string => {
   // Only proxy in development mode
-  if (import.meta.env.PROD) {
+  if (isProduction) {
     return originalUrl;
   }
   

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { server } from '../../test/mocks/server';
 import { http, HttpResponse } from 'msw';
 import { checkService } from '../http';
@@ -15,6 +15,18 @@ describe('checkService', () => {
 
   beforeEach(() => {
     server.resetHandlers();
+    // Mock production environment by default for existing tests
+    vi.stubGlobal('import', {
+      meta: {
+        env: {
+          PROD: true
+        }
+      }
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('returns operational status for successful request within threshold', async () => {
@@ -211,5 +223,134 @@ describe('checkService', () => {
 
     expect(result.status).toBe('operational');
     expect(result.statusCode).toBe(200);
+  });
+
+  describe('proxy URL conversion in development', () => {
+    beforeEach(() => {
+      // Mock development environment
+      vi.stubGlobal('import', {
+        meta: {
+          env: {
+            PROD: false
+          }
+        }
+      });
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it('converts external URLs to proxy paths in development mode', async () => {
+      let capturedUrl = '';
+      
+      server.use(
+        http.get('/api/api.test.com/health', ({ request }) => {
+          capturedUrl = request.url;
+          return new HttpResponse(null, { status: 200 });
+        })
+      );
+
+      await checkService(baseService, 'https://api.test.com/health');
+
+      expect(capturedUrl).toContain('/api/api.test.com/health');
+    });
+
+    it('preserves path and query parameters in proxy URL', async () => {
+      let capturedUrl = '';
+      
+      server.use(
+        http.get('/api/api.test.com/v1/health', ({ request }) => {
+          capturedUrl = request.url;
+          return new HttpResponse(null, { status: 200 });
+        })
+      );
+
+      await checkService(baseService, 'https://api.test.com/v1/health?key=value');
+
+      expect(capturedUrl).toContain('/api/api.test.com/v1/health');
+      expect(capturedUrl).toContain('key=value');
+    });
+
+    it('handles different status codes through proxy', async () => {
+      // Test 404
+      server.use(
+        http.get('/api/api.test.com/health', () => {
+          return new HttpResponse(null, { status: 404 });
+        })
+      );
+
+      const result404 = await checkService(baseService, 'https://api.test.com/health');
+      expect(result404.statusCode).toBe(404);
+      expect(result404.status).toBe('outage');
+
+      // Test 500
+      server.use(
+        http.get('/api/api.test.com/health', () => {
+          return new HttpResponse(null, { status: 500 });
+        })
+      );
+
+      const result500 = await checkService(baseService, 'https://api.test.com/health');
+      expect(result500.statusCode).toBe(500);
+      expect(result500.status).toBe('outage');
+
+      // Test 503
+      server.use(
+        http.get('/api/api.test.com/health', () => {
+          return new HttpResponse(null, { status: 503 });
+        })
+      );
+
+      const result503 = await checkService(baseService, 'https://api.test.com/health');
+      expect(result503.statusCode).toBe(503);
+      expect(result503.status).toBe('outage');
+    });
+
+    it('handles invalid URLs gracefully', async () => {
+      server.use(
+        http.get('not-a-valid-url', () => {
+          return new HttpResponse(null, { status: 200 });
+        })
+      );
+
+      const result = await checkService(baseService, 'not-a-valid-url');
+      
+      // Should still try to fetch the invalid URL as-is
+      expect(result.status).toBe('operational');
+    });
+  });
+
+  describe('production mode', () => {
+    beforeEach(() => {
+      // Mock production environment
+      vi.stubGlobal('import', {
+        meta: {
+          env: {
+            PROD: true
+          }
+        }
+      });
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it('uses original URLs without proxy in production', async () => {
+      let capturedUrl = '';
+      
+      server.use(
+        http.get('https://api.test.com/health', ({ request }) => {
+          capturedUrl = request.url;
+          return new HttpResponse(null, { status: 200 });
+        })
+      );
+
+      await checkService(baseService, 'https://api.test.com/health');
+
+      expect(capturedUrl).toContain('https://api.test.com/health');
+      expect(capturedUrl).not.toContain('/api/api.test.com');
+    });
   });
 });
