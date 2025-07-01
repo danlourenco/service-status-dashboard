@@ -44,6 +44,12 @@ npm run build
 
 The application uses a flexible configuration system supporting multiple instances:
 
+### CORS Proxy in Development
+
+When running on localhost, the application automatically proxies all service URLs defined in `config.json` to avoid CORS issues. This happens transparently - just define your service URLs normally and the dev server will handle the proxying.
+
+Example: If your config contains `https://api.example.com/health`, it will be proxied through `/api/api.example.com/health` in development mode.
+
 ```json
 {
   "app": {

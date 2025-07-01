@@ -1,11 +1,29 @@
 import type { ServiceConfig, ServiceStatus } from '../types';
 
+// Convert external URLs to proxy URLs in development
+const getProxyUrl = (originalUrl: string): string => {
+  // Only proxy in development mode
+  if (import.meta.env.PROD) {
+    return originalUrl;
+  }
+  
+  try {
+    const url = new URL(originalUrl);
+    // Convert to proxy URL: https://api.example.com/health -> /api/api.example.com/health
+    return `/api/${url.host}${url.pathname}${url.search}`;
+  } catch (e) {
+    // If URL parsing fails, return original
+    return originalUrl;
+  }
+};
+
 export const checkService = async (service: ServiceConfig, url: string): Promise<ServiceStatus> => {
   const startTime = Date.now();
   const timeout = service.timeout || 5000;
+  const proxyUrl = getProxyUrl(url);
   
   try {
-    const response = await fetch(url, {
+    const response = await fetch(proxyUrl, {
       method: service.method || 'GET',
       headers: service.headers || {},
       signal: AbortSignal.timeout(timeout)

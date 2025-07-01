@@ -367,8 +367,10 @@ We selected specific UnJS packages based on the application's needs:
   - Better formatted console output
   - Log levels for debugging health checks
 - **httpxy**: Development proxy for CORS
-  - Handles CORS issues during local development
-  - Proxies health check requests to actual services
+  - Integrated into Vite dev server for automatic CORS handling
+  - Automatically proxies all service URLs from config.json
+  - Transparent operation - no config changes needed
+  - Only active in development mode
 - **Native Fetch**: Standard web API
   - Used as the HTTP client within TanStack Query
   - AbortSignal.timeout for request cancellation
@@ -399,6 +401,17 @@ Services are monitored via HTTP health checks with:
 - Expected status code validation
 - Response time tracking
 - Error handling and reporting
+
+### CORS Handling in Development
+
+The application includes automatic CORS proxy support for local development:
+
+1. **Automatic Detection**: On startup, Vite reads all service URLs from `config.json`
+2. **Proxy Setup**: Each unique host is mapped to a proxy path (e.g., `api.example.com` → `/api/api.example.com/*`)
+3. **Transparent Rewriting**: The `checkService` function automatically converts URLs to proxy paths in development
+4. **Production Ready**: In production builds, URLs are used as-is without proxying
+
+This means you can use real service URLs in your config without worrying about CORS during development. The proxy is completely transparent and requires no configuration changes.
 
 ## Generic Application Instance Model
 

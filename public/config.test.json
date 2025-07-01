@@ -1,0 +1,35 @@
+{
+  "app": {
+    "title": "Test Service Monitor",
+    "description": "Testing CORS proxy with real endpoints",
+    "refreshInterval": 30000
+  },
+  "services": [
+    {
+      "name": "Health Check",
+      "description": "Basic health endpoint",
+      "timeout": 5000,
+      "expectedStatus": [200]
+    },
+    {
+      "name": "Status Check",
+      "description": "Status code test",
+      "timeout": 3000,
+      "expectedStatus": [200]
+    }
+  ],
+  "instances": {
+    "test": {
+      "name": "Test Services",
+      "environments": {
+        "dev": {
+          "name": "Development",
+          "services": {
+            "Health Check": { "url": "https://httpbin.org/status/200" },
+            "Status Check": { "url": "https://jsonplaceholder.typicode.com/posts/1" }
+          }
+        }
+      }
+    }
+  }
+}
