@@ -1,5 +1,8 @@
 import type { ServiceConfig, ServiceStatus } from '../types';
 
+// Cache for storing last successful JSON responses by URL
+const responseCache = new Map<string, any>();
+
 // Export for testing
 export const getProxyUrl = (originalUrl: string, isProduction = import.meta.env.PROD): string => {
   // Only proxy in development mode
@@ -35,12 +38,20 @@ export const checkService = async (service: ServiceConfig, url: string): Promise
     
     // Debug logging in development
     if (!import.meta.env.PROD) {
+      const contentType = response.headers.get('content-type');
+      const hasCachedData = responseCache.has(url);
       console.log(`Service check for ${service.name}:`, {
         originalUrl: url,
         proxyUrl,
         status: response.status,
         statusText: response.statusText,
-        isHealthy
+        isHealthy,
+        contentType,
+        hasCachedData,
+        willShowResponseData: isHealthy && (
+          (response.status === 200 && contentType?.includes('application/json')) ||
+          (response.status === 304 && hasCachedData)
+        )
       });
     }
     
@@ -51,16 +62,24 @@ export const checkService = async (service: ServiceConfig, url: string): Promise
       status = 'degraded';
     }
     
-    // Try to capture JSON response data for successful 200 responses
+    // Try to capture JSON response data for successful responses
     let responseData;
-    if (response.status === 200 && isHealthy) {
-      try {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          responseData = await response.json();
+    if (isHealthy) {
+      if (response.status === 200) {
+        // For 200 responses, try to get fresh JSON data
+        try {
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            responseData = await response.json();
+            // Cache the fresh response for future 304s
+            responseCache.set(url, responseData);
+          }
+        } catch (e) {
+          // If JSON parsing fails, ignore - don't fail the health check
         }
-      } catch (e) {
-        // If JSON parsing fails, ignore - don't fail the health check
+      } else if (response.status === 304) {
+        // For 304 Not Modified, use cached response if available
+        responseData = responseCache.get(url);
       }
     }
     
