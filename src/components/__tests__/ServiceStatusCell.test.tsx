@@ -15,7 +15,6 @@ const mockService: ServiceConfig = {
 const mockStatus: ServiceStatus = {
   status: 'operational',
   responseTime: 150,
-  uptime: 99.9,
   lastChecked: '10:30:45 AM',
   statusCode: 200
 };
@@ -35,7 +34,7 @@ describe('ServiceStatusCell', () => {
     expect(screen.getByText('150ms')).toBeInTheDocument();
   });
 
-  it('renders uptime bar with correct width', () => {
+  it('renders status indicator correctly', () => {
     const { container } = render(
       <ServiceStatusCell
         service={mockService}
@@ -45,8 +44,8 @@ describe('ServiceStatusCell', () => {
       />
     );
 
-    const uptimeBar = container.querySelector('.h-full.bg-gradient-to-r') as HTMLElement;
-    expect(uptimeBar).toHaveStyle({ width: '99.9%' });
+    const statusIndicator = container.querySelector('.w-3.h-3.rounded-full');
+    expect(statusIndicator).toBeInTheDocument();
   });
 
   it('shows tooltip on hover with all information', async () => {
@@ -70,7 +69,6 @@ describe('ServiceStatusCell', () => {
     expect(screen.getByText('Endpoint: https://api.test.com/health')).toBeInTheDocument();
     expect(screen.getByText('Status: operational')).toBeInTheDocument();
     expect(screen.getByText('Response: 150ms')).toBeInTheDocument();
-    expect(screen.getByText('Uptime: 99.9%')).toBeInTheDocument();
     expect(screen.getByText('Last checked: 10:30:45 AM')).toBeInTheDocument();
     expect(screen.getByText('HTTP: 200')).toBeInTheDocument();
   });

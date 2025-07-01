@@ -3,9 +3,11 @@ import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useStatusStore } from '../stores/statusStore';
 import { loadConfiguration } from '../utils/config';
 import { checkService } from '../utils/http';
+import { useRefreshCountdown } from '../hooks/useRefreshCountdown';
 import TabNavigation from './TabNavigation';
 import EnvironmentColumn from './EnvironmentColumn';
 import StatusIndicator from './StatusIndicator';
+import RefreshCountdown from './RefreshCountdown';
 import type { ServiceStatus } from '../types';
 
 const StatusMonitor: React.FC = () => {
@@ -148,6 +150,14 @@ const StatusMonitor: React.FC = () => {
   // Check if any queries are currently fetching
   const isRefreshing = serviceQueries.some(q => q.isFetching);
 
+  // Countdown for auto-refresh
+  const refreshInterval = config?.app.refreshInterval || 30000;
+  const countdown = useRefreshCountdown({
+    isEnabled: autoRefresh,
+    intervalMs: refreshInterval,
+    isRefreshing
+  });
+
   if (configLoading) {
     return (
       <div className="min-h-screen bg-slate-900 text-slate-200 flex items-center justify-center">
@@ -214,7 +224,7 @@ const StatusMonitor: React.FC = () => {
         </div>
 
         {/* Controls */}
-        <div className="flex justify-center gap-4 mb-8 flex-wrap">
+        <div className="flex justify-center gap-4 mb-8 flex-wrap items-center">
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
@@ -233,6 +243,12 @@ const StatusMonitor: React.FC = () => {
           >
             {autoRefresh ? 'Disable Auto-Refresh' : 'Enable Auto-Refresh'}
           </button>
+          <RefreshCountdown
+            timeLeft={countdown.timeLeft}
+            formattedTime={countdown.formattedTime}
+            progress={countdown.progress}
+            isEnabled={autoRefresh}
+          />
         </div>
 
         {/* Environment Grid for Current Instance */}
