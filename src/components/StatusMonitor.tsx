@@ -8,6 +8,7 @@ import TabNavigation from './TabNavigation';
 import EnvironmentColumn from './EnvironmentColumn';
 import StatusIndicator from './StatusIndicator';
 import RefreshCountdown from './RefreshCountdown';
+import RefreshIntervalSelector from './RefreshIntervalSelector';
 import type { ServiceStatus } from '../types';
 
 const StatusMonitor: React.FC = () => {
@@ -15,9 +16,11 @@ const StatusMonitor: React.FC = () => {
   const { 
     currentInstance, 
     autoRefresh, 
+    customRefreshInterval,
     config,
     setCurrentInstance, 
     toggleAutoRefresh,
+    setRefreshInterval,
     setConfig 
   } = useStatusStore();
 
@@ -48,7 +51,7 @@ const StatusMonitor: React.FC = () => {
           return checkService(service, serviceUrl);
         },
         enabled: !!config && !!envConfig.services[service.name],
-        refetchInterval: autoRefresh ? (config.app.refreshInterval || 30000) : undefined,
+        refetchInterval: autoRefresh ? (customRefreshInterval || config.app.refreshInterval || 30000) : undefined,
         staleTime: 10000,
         retry: 3,
         retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -97,7 +100,6 @@ const StatusMonitor: React.FC = () => {
           envServiceStatuses[service.name] = {
             status: 'unknown',
             responseTime: 0,
-            uptime: 0,
             lastChecked: 'Never'
           };
         }
@@ -151,7 +153,7 @@ const StatusMonitor: React.FC = () => {
   const isRefreshing = serviceQueries.some(q => q.isFetching);
 
   // Countdown for auto-refresh
-  const refreshInterval = config?.app.refreshInterval || 30000;
+  const refreshInterval = customRefreshInterval || config?.app.refreshInterval || 30000;
   const countdown = useRefreshCountdown({
     isEnabled: autoRefresh,
     intervalMs: refreshInterval,
@@ -243,6 +245,11 @@ const StatusMonitor: React.FC = () => {
           >
             {autoRefresh ? 'Disable Auto-Refresh' : 'Enable Auto-Refresh'}
           </button>
+          <RefreshIntervalSelector
+            currentInterval={refreshInterval}
+            onIntervalChange={setRefreshInterval}
+            isEnabled={autoRefresh}
+          />
           <RefreshCountdown
             timeLeft={countdown.timeLeft}
             formattedTime={countdown.formattedTime}
