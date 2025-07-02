@@ -21,33 +21,18 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, onTabCha
   }, [activeTab, tabs]);
 
   return (
-    <div className="relative flex bg-slate-800/50 rounded-lg p-1 border border-slate-700/50">
-      {/* Continuous gradient background spanning the entire container */}
-      <div 
-        className="absolute inset-1 rounded-md opacity-20"
-        style={{
-          background: `linear-gradient(90deg, 
-            #3b82f6, 
-            #8b5cf6, 
-            #ec4899, 
-            #10b981)`,
-        }}
-      />
+    <div className="relative flex rounded-lg p-1 border border-slate-700/50 overflow-hidden"
+      style={{
+        background: `linear-gradient(90deg, #1e40af, #0891b2)`
+      }}>
       
-      {/* Sliding active indicator that reveals the gradient */}
+      {/* Active tab indicator */}
       <div 
-        className="absolute top-1 bottom-1 rounded-md transition-all duration-300 ease-out"
+        className="absolute top-1 bottom-1 bg-slate-900/80 backdrop-blur-sm rounded-md transition-all duration-300 ease-out border border-slate-600/30"
         style={{
           left: `calc(${activeIndex} * (100% / ${tabs.length}) + 4px)`,
           width: `calc(100% / ${tabs.length} - 8px)`,
-          background: `linear-gradient(90deg, 
-            #3b82f6, 
-            #8b5cf6, 
-            #ec4899, 
-            #10b981)`,
-          backgroundSize: `${tabs.length * 100}% 100%`,
-          backgroundPosition: `${-activeIndex * 100}% 0%`,
-          boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+          boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
         }}
       />
 
