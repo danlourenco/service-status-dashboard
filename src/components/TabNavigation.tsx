@@ -14,11 +14,16 @@ interface TabNavigationProps {
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, onTabChange }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [buttonRefs, setButtonRefs] = useState<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     const newIndex = tabs.findIndex(tab => tab.id === activeTab);
     setActiveIndex(newIndex);
   }, [activeTab, tabs]);
+
+  useEffect(() => {
+    setButtonRefs(refs => Array(tabs.length).fill(null).map((_, i) => refs[i] || null));
+  }, [tabs.length]);
 
   return (
     <div className="relative flex rounded-lg p-1 border border-white/20 overflow-hidden backdrop-blur-2xl"
@@ -52,8 +57,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, onTabCha
       <div 
         className="absolute top-1 bottom-1 rounded-md transition-all duration-300 ease-out"
         style={{
-          left: `calc(${activeIndex} * (100% / ${tabs.length}) + 4px)`,
-          width: `calc(100% / ${tabs.length} - 8px)`,
+          left: buttonRefs[activeIndex]?.offsetLeft ? `${buttonRefs[activeIndex]!.offsetLeft}px` : '4px',
+          width: buttonRefs[activeIndex]?.offsetWidth ? `${buttonRefs[activeIndex]!.offsetWidth}px` : 'auto',
           background: `linear-gradient(135deg, 
             rgba(255, 255, 255, 0.25) 0%, 
             rgba(255, 255, 255, 0.1) 50%, 
@@ -72,9 +77,14 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, onTabCha
       {tabs.map((tab, index) => (
         <button
           key={tab.id}
+          ref={el => {
+            const newRefs = [...buttonRefs];
+            newRefs[index] = el;
+            setButtonRefs(newRefs);
+          }}
           onClick={() => onTabChange(tab.id)}
           className={`
-            relative z-10 px-6 py-3 rounded-md font-medium transition-all duration-300 cursor-pointer flex-1
+            relative z-10 px-6 py-3 rounded-md font-medium transition-all duration-300 cursor-pointer whitespace-nowrap
             ${activeTab === tab.id
               ? 'text-white' 
               : 'text-slate-400 hover:text-slate-200'
