@@ -39,14 +39,13 @@ describe('TabNavigation', () => {
 
     const activeTab = screen.getByText('Analytics Platform');
     expect(activeTab).toHaveClass(
+      'relative',
+      'z-10',
       'px-6',
       'py-3',
       'rounded-md',
       'font-medium',
-      'bg-blue-600',
-      'text-white',
-      'shadow-lg',
-      'transition-all'
+      'text-white'
     );
   });
 
@@ -63,14 +62,13 @@ describe('TabNavigation', () => {
 
     const inactiveTab = screen.getByText('Primary Application');
     expect(inactiveTab).toHaveClass(
+      'relative',
+      'z-10',
       'px-6',
       'py-3',
       'rounded-md',
       'font-medium',
-      'text-slate-400',
-      'hover:text-slate-200',
-      'hover:bg-slate-700/50',
-      'transition-all'
+      'text-slate-400'
     );
   });
 
