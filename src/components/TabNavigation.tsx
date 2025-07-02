@@ -21,8 +21,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, onTabCha
           onClick={() => onTabChange(tab.id)}
           className={
             activeTab === tab.id
-              ? "px-6 py-3 rounded-md font-medium bg-blue-600 text-white shadow-lg transition-all"
-              : "px-6 py-3 rounded-md font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-all"
+              ? "px-6 py-3 rounded-md font-medium bg-blue-600 text-white shadow-lg transition-all cursor-pointer"
+              : "px-6 py-3 rounded-md font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-all cursor-pointer"
           }
           title={tab.description}
         >

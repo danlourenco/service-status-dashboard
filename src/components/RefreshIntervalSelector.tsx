@@ -26,7 +26,7 @@ const RefreshIntervalSelector: React.FC<RefreshIntervalSelectorProps> = ({
         value={currentInterval}
         onChange={(e) => onIntervalChange(Number(e.target.value))}
         disabled={!isEnabled}
-        className="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-200 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {intervals.map(({ label, value }) => (
           <option key={value} value={value}>

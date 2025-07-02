@@ -230,14 +230,14 @@ const StatusMonitor: React.FC = () => {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-blue-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-blue-500/25 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isRefreshing && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}
             Refresh {currentInstanceConfig?.name} Services
           </button>
           <button
             onClick={toggleAutoRefresh}
-            className={`px-6 py-3 font-semibold rounded-lg transition-all ${
+            className={`px-6 py-3 font-semibold rounded-lg transition-all cursor-pointer ${
               autoRefresh
                 ? 'bg-green-600 text-white hover:bg-green-700 hover:shadow-lg hover:shadow-green-500/25'
                 : 'bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600'
