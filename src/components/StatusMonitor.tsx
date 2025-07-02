@@ -8,11 +8,12 @@ import TabNavigation from './TabNavigation';
 import EnvironmentColumn from './EnvironmentColumn';
 import StatusIndicator from './StatusIndicator';
 import RefreshCountdown from './RefreshCountdown';
-import RefreshIntervalSelector from './RefreshIntervalSelector';
+import SettingsModal from './SettingsModal';
 import type { ServiceStatus } from '../types';
 
 const StatusMonitor: React.FC = () => {
   const queryClient = useQueryClient();
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const { 
     currentInstance, 
     autoRefresh, 
@@ -193,18 +194,32 @@ const StatusMonitor: React.FC = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-slate-900 text-slate-200 relative">
+      {/* Settings Button - Top Right */}
+      <button
+        onClick={() => setIsSettingsOpen(true)}
+        className="absolute top-8 right-8 flex items-center gap-2 px-3 py-2 bg-slate-800/50 text-slate-400 border border-slate-700/50 rounded-lg hover:bg-slate-700/50 hover:text-slate-200 transition-all cursor-pointer"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        Settings
+      </button>
+
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-semibold mb-2 text-purple-400 tracking-tight">
             {config.app.title}
           </h1>
-          <p className="text-slate-400">{config.app.description}</p>
+          <p className="text-slate-400 text-base">
+            {config.app.description}
+          </p>
         </div>
 
         {/* Instance Tabs */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-12">
           <TabNavigation 
             tabs={instanceTabs}
             activeTab={currentInstance}
@@ -212,50 +227,49 @@ const StatusMonitor: React.FC = () => {
           />
         </div>
 
-        {/* Current Instance Display */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-semibold text-slate-300">
-            {currentInstanceConfig?.name} Services
-          </h2>
-        </div>
-
-        {/* Overall Status for Current Instance */}
-        <div className="flex items-center justify-center gap-3 mb-8 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
-          <StatusIndicator status={overallStatus.status as ServiceStatus['status']} className="w-6 h-6" />
-          <span className="font-medium text-lg">{overallStatus.message}</span>
-        </div>
-
-        {/* Controls */}
-        <div className="flex justify-center gap-4 mb-8 flex-wrap items-center">
-          <button
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-blue-500/25 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isRefreshing && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}
-            Refresh {currentInstanceConfig?.name} Services
-          </button>
-          <button
-            onClick={toggleAutoRefresh}
-            className={`px-6 py-3 font-semibold rounded-lg transition-all cursor-pointer ${
-              autoRefresh
-                ? 'bg-green-600 text-white hover:bg-green-700 hover:shadow-lg hover:shadow-green-500/25'
-                : 'bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600'
-            }`}
-          >
-            {autoRefresh ? 'Disable Auto-Refresh' : 'Enable Auto-Refresh'}
-          </button>
-          <RefreshIntervalSelector
-            currentInterval={refreshInterval}
-            onIntervalChange={setRefreshInterval}
-            isEnabled={autoRefresh}
-          />
-          <RefreshCountdown
-            timeLeft={countdown.timeLeft}
-            formattedTime={countdown.formattedTime}
-            progress={countdown.progress}
-            isEnabled={autoRefresh}
-          />
+        {/* Status Header - Streamlined */}
+        <div className="flex items-center justify-between mb-8 px-1">
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-semibold text-white">
+              {currentInstanceConfig?.name} Services
+            </h2>
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+              overallStatus.status === 'operational' 
+                ? 'bg-green-900/30 border-green-600/30' 
+                : overallStatus.status === 'degraded'
+                ? 'bg-yellow-900/30 border-yellow-600/30'
+                : 'bg-red-900/30 border-red-600/30'
+            }`}>
+              <StatusIndicator status={overallStatus.status as ServiceStatus['status']} className="w-2 h-2" />
+              <span className={`text-sm font-medium ${
+                overallStatus.status === 'operational' 
+                  ? 'text-green-400' 
+                  : overallStatus.status === 'degraded'
+                  ? 'text-yellow-400'
+                  : 'text-red-400'
+              }`}>{overallStatus.message}</span>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isRefreshing && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}
+              Refresh
+            </button>
+            
+            {autoRefresh && (
+              <RefreshCountdown
+                timeLeft={countdown.timeLeft}
+                formattedTime={countdown.formattedTime}
+                progress={countdown.progress}
+                isEnabled={autoRefresh}
+              />
+            )}
+          </div>
         </div>
 
         {/* Environment Grid for Current Instance */}
@@ -272,6 +286,16 @@ const StatusMonitor: React.FC = () => {
             />
           ))}
         </div>
+
+        {/* Settings Modal */}
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          autoRefresh={autoRefresh}
+          refreshInterval={refreshInterval}
+          onToggleAutoRefresh={toggleAutoRefresh}
+          onIntervalChange={setRefreshInterval}
+        />
       </div>
     </div>
   );

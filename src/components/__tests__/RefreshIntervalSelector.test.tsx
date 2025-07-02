@@ -13,7 +13,6 @@ describe('RefreshIntervalSelector', () => {
       />
     );
 
-    expect(screen.getByText('Every')).toBeInTheDocument();
     expect(screen.getByDisplayValue('30s')).toBeInTheDocument();
   });
 
@@ -60,11 +59,11 @@ describe('RefreshIntervalSelector', () => {
     const select = container.querySelector('select');
     expect(select).toHaveClass(
       'px-3',
-      'py-2',
+      'py-1',
       'bg-slate-700',
       'border',
       'border-slate-600',
-      'rounded-lg',
+      'rounded-md',
       'text-slate-200',
       'text-sm'
     );

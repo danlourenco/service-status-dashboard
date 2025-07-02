@@ -8,6 +8,7 @@ vi.mock('../../stores/statusStore', () => ({
   useStatusStore: () => ({
     currentInstance: 'primary',
     autoRefresh: false,
+    customRefreshInterval: null,
     config: {
       app: {
         title: 'Test Service Status Monitor',
@@ -38,6 +39,7 @@ vi.mock('../../stores/statusStore', () => ({
     },
     setCurrentInstance: vi.fn(),
     toggleAutoRefresh: vi.fn(),
+    setRefreshInterval: vi.fn(),
     setConfig: vi.fn()
   })
 }));
@@ -123,15 +125,15 @@ describe('StatusMonitor', () => {
     expect(screen.getByText('Primary Application')).toBeInTheDocument();
   });
 
-  it('renders refresh and auto-refresh buttons', () => {
+  it('renders refresh and settings buttons', () => {
     render(
       <TestWrapper>
         <StatusMonitor />
       </TestWrapper>
     );
 
-    expect(screen.getByText('Refresh Primary Application Services')).toBeInTheDocument();
-    expect(screen.getByText('Enable Auto-Refresh')).toBeInTheDocument();
+    expect(screen.getByText('Refresh')).toBeInTheDocument();
+    expect(screen.getByText('Settings')).toBeInTheDocument();
   });
 
   it('renders environment grid', () => {
@@ -156,7 +158,7 @@ describe('StatusMonitor', () => {
     expect(mainContainer).toHaveClass('bg-slate-900', 'text-slate-200');
 
     const contentContainer = container.querySelector('.max-w-7xl');
-    expect(contentContainer).toHaveClass('mx-auto', 'px-4', 'py-8');
+    expect(contentContainer).toHaveClass('mx-auto', 'px-8', 'py-8');
   });
 
   it('displays overall status banner', () => {

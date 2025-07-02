@@ -16,15 +16,15 @@ const RefreshCountdown: React.FC<RefreshCountdownProps> = ({
   if (!isEnabled) return null;
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
+    <div className="flex items-center gap-2">
       {/* Circular Progress */}
-      <div className="relative w-8 h-8">
-        <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
+      <div className="relative w-6 h-6">
+        <svg className="w-6 h-6 transform -rotate-90" viewBox="0 0 24 24">
           {/* Background circle */}
           <circle
-            cx="16"
-            cy="16"
-            r="14"
+            cx="12"
+            cy="12"
+            r="10"
             stroke="currentColor"
             strokeWidth="2"
             fill="none"
@@ -32,15 +32,15 @@ const RefreshCountdown: React.FC<RefreshCountdownProps> = ({
           />
           {/* Progress circle */}
           <circle
-            cx="16"
-            cy="16"
-            r="14"
+            cx="12"
+            cy="12"
+            r="10"
             stroke="currentColor"
             strokeWidth="2"
             fill="none"
             className="text-blue-400"
-            strokeDasharray={`${2 * Math.PI * 14}`}
-            strokeDashoffset={`${2 * Math.PI * 14 * (1 - progress / 100)}`}
+            strokeDasharray={`${2 * Math.PI * 10}`}
+            strokeDashoffset={`${2 * Math.PI * 10 * (1 - progress / 100)}`}
             strokeLinecap="round"
             style={{ transition: 'stroke-dashoffset 0.1s ease-out' }}
           />
@@ -48,9 +48,8 @@ const RefreshCountdown: React.FC<RefreshCountdownProps> = ({
       </div>
       
       {/* Countdown Text */}
-      <div className="text-sm">
-        <div className="text-slate-300 font-medium">Next refresh in</div>
-        <div className="text-blue-400 font-mono text-xs">{formattedTime}</div>
+      <div className="text-sm font-mono text-slate-300">
+        {formattedTime}
       </div>
     </div>
   );
