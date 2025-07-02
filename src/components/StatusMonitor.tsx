@@ -227,51 +227,71 @@ const StatusMonitor: React.FC = () => {
           />
         </div>
 
-        {/* Status Header with centered content */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-4 mb-6">
+        {/* Status Header - Single line with everything */}
+        <div className="flex items-center justify-between mb-8 px-1">
+          <div className="flex items-center gap-4">
             <h2 className="text-xl font-semibold text-white">
               {currentInstanceConfig?.name} Services
             </h2>
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs font-medium ${
               overallStatus.status === 'operational' 
-                ? 'bg-green-900/30 border-green-600/30' 
+                ? 'bg-green-900/30 border-green-600/30 text-green-400' 
                 : overallStatus.status === 'degraded'
-                ? 'bg-yellow-900/30 border-yellow-600/30'
-                : 'bg-red-900/30 border-red-600/30'
+                ? 'bg-yellow-900/30 border-yellow-600/30 text-yellow-400'
+                : 'bg-red-900/30 border-red-600/30 text-red-400'
             }`}>
-              <StatusIndicator status={overallStatus.status as ServiceStatus['status']} className="w-2 h-2" />
-              <span className={`text-sm font-medium ${
-                overallStatus.status === 'operational' 
-                  ? 'text-green-400' 
-                  : overallStatus.status === 'degraded'
-                  ? 'text-yellow-400'
-                  : 'text-red-400'
-              }`}>{overallStatus.message}</span>
+              <StatusIndicator status={overallStatus.status as ServiceStatus['status']} className="w-1.5 h-1.5" />
+              {overallStatus.message}
             </div>
           </div>
-
-          {/* Controls Bar */}
-          <div className="flex items-center justify-center gap-6">
+          
+          <div className="flex items-center gap-3">
+            {autoRefresh && (
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <div className="relative w-4 h-4">
+                  <svg className="w-4 h-4 transform -rotate-90" viewBox="0 0 16 16">
+                    <circle
+                      cx="8"
+                      cy="8"
+                      r="6"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      fill="none"
+                      className="text-slate-700"
+                    />
+                    <circle
+                      cx="8"
+                      cy="8"
+                      r="6"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      fill="none"
+                      className="text-blue-400"
+                      strokeDasharray={`${2 * Math.PI * 6}`}
+                      strokeDashoffset={`${2 * Math.PI * 6 * (1 - progress / 100)}`}
+                      strokeLinecap="round"
+                      style={{ transition: 'stroke-dashoffset 0.2s ease-out' }}
+                    />
+                  </svg>
+                </div>
+                <span className="font-mono text-xs">{countdown.formattedTime}</span>
+              </div>
+            )}
+            
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/25"
+              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isRefreshing && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}
-              Refresh Services
+              {isRefreshing ? (
+                <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
+              ) : (
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              )}
+              Refresh
             </button>
-            
-            {autoRefresh && (
-              <div className="animate-fade-in">
-                <RefreshCountdown
-                  timeLeft={countdown.timeLeft}
-                  formattedTime={countdown.formattedTime}
-                  progress={countdown.progress}
-                  isEnabled={autoRefresh}
-                />
-              </div>
-            )}
           </div>
         </div>
 
