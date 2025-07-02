@@ -132,8 +132,8 @@ describe('StatusMonitor', () => {
       </TestWrapper>
     );
 
-    expect(screen.getByText('Refresh')).toBeInTheDocument();
-    expect(screen.getByText('Settings')).toBeInTheDocument();
+    expect(screen.getByText('Refresh Services')).toBeInTheDocument();
+    expect(screen.getByTitle('Settings')).toBeInTheDocument();
   });
 
   it('renders environment grid', () => {

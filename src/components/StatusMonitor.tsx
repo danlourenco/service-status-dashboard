@@ -194,28 +194,28 @@ const StatusMonitor: React.FC = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 relative">
-      {/* Settings Button - Top Right */}
-      <button
-        onClick={() => setIsSettingsOpen(true)}
-        className="absolute top-8 right-8 flex items-center gap-2 px-3 py-2 bg-slate-800/50 text-slate-400 border border-slate-700/50 rounded-lg hover:bg-slate-700/50 hover:text-slate-200 transition-all cursor-pointer"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        Settings
-      </button>
-
+    <div className="min-h-screen bg-slate-900 text-slate-200">
       <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 relative">
           <h1 className="text-3xl font-semibold mb-2 text-purple-400 tracking-tight">
             {config.app.title}
           </h1>
           <p className="text-slate-400 text-base">
             {config.app.description}
           </p>
+          
+          {/* Settings Button - Subtle placement */}
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="absolute top-0 right-0 p-2 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+            title="Settings"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
         </div>
 
         {/* Instance Tabs */}
@@ -227,9 +227,9 @@ const StatusMonitor: React.FC = () => {
           />
         </div>
 
-        {/* Status Header - Streamlined */}
-        <div className="flex items-center justify-between mb-8 px-1">
-          <div className="flex items-center gap-4">
+        {/* Status Header with centered content */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-4 mb-6">
             <h2 className="text-xl font-semibold text-white">
               {currentInstanceConfig?.name} Services
             </h2>
@@ -250,24 +250,27 @@ const StatusMonitor: React.FC = () => {
               }`}>{overallStatus.message}</span>
             </div>
           </div>
-          
-          <div className="flex items-center gap-3">
+
+          {/* Controls Bar */}
+          <div className="flex items-center justify-center gap-6">
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/25"
             >
               {isRefreshing && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}
-              Refresh
+              Refresh Services
             </button>
             
             {autoRefresh && (
-              <RefreshCountdown
-                timeLeft={countdown.timeLeft}
-                formattedTime={countdown.formattedTime}
-                progress={countdown.progress}
-                isEnabled={autoRefresh}
-              />
+              <div className="animate-fade-in">
+                <RefreshCountdown
+                  timeLeft={countdown.timeLeft}
+                  formattedTime={countdown.formattedTime}
+                  progress={countdown.progress}
+                  isEnabled={autoRefresh}
+                />
+              </div>
             )}
           </div>
         </div>
