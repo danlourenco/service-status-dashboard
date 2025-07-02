@@ -8,7 +8,7 @@ interface RefreshCountdownProps {
 }
 
 const RefreshCountdown: React.FC<RefreshCountdownProps> = ({ 
-  timeLeft, 
+  timeLeft: _timeLeft, 
   formattedTime, 
   progress, 
   isEnabled 

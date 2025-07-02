@@ -35,14 +35,12 @@ const mockServiceStatuses: Record<string, ServiceStatus> = {
   'Database': {
     status: 'operational',
     responseTime: 120,
-    uptime: 99.9,
     lastChecked: '10:30:45 AM',
     statusCode: 200
   },
   'Cache': {
     status: 'degraded',
     responseTime: 2500,
-    uptime: 98.5,
     lastChecked: '10:30:46 AM',
     statusCode: 200
   }
@@ -148,7 +146,7 @@ describe('EnvironmentColumn', () => {
   });
 
   it('applies correct status badge styling for degraded state', () => {
-    const { container } = render(
+    render(
       <EnvironmentColumn
         instanceKey="test"
         instanceConfig={mockInstanceConfig}

@@ -7,7 +7,7 @@ import { useRefreshCountdown } from '../hooks/useRefreshCountdown';
 import TabNavigation from './TabNavigation';
 import EnvironmentColumn from './EnvironmentColumn';
 import StatusIndicator from './StatusIndicator';
-import RefreshCountdown from './RefreshCountdown';
+// import RefreshCountdown from './RefreshCountdown'; // No longer used
 import SettingsModal from './SettingsModal';
 import type { ServiceStatus } from '../types';
 
@@ -268,7 +268,7 @@ const StatusMonitor: React.FC = () => {
                       fill="none"
                       className="text-blue-400"
                       strokeDasharray={`${2 * Math.PI * 6}`}
-                      strokeDashoffset={`${2 * Math.PI * 6 * (1 - progress / 100)}`}
+                      strokeDashoffset={`${2 * Math.PI * 6 * (1 - countdown.progress / 100)}`}
                       strokeLinecap="round"
                       style={{ transition: 'stroke-dashoffset 0.2s ease-out' }}
                     />
