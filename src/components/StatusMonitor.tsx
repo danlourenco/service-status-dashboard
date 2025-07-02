@@ -246,37 +246,6 @@ const StatusMonitor: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            {autoRefresh && (
-              <div className="flex items-center gap-2 text-sm text-slate-400">
-                <div className="relative w-4 h-4">
-                  <svg className="w-4 h-4 transform -rotate-90" viewBox="0 0 16 16">
-                    <circle
-                      cx="8"
-                      cy="8"
-                      r="6"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      fill="none"
-                      className="text-slate-700"
-                    />
-                    <circle
-                      cx="8"
-                      cy="8"
-                      r="6"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      fill="none"
-                      className="text-blue-400"
-                      strokeDasharray={`${2 * Math.PI * 6}`}
-                      strokeDashoffset={`${2 * Math.PI * 6 * (1 - countdown.progress / 100)}`}
-                      strokeLinecap="round"
-                      style={{ transition: 'stroke-dashoffset 0.2s ease-out' }}
-                    />
-                  </svg>
-                </div>
-                <span className="font-mono text-xs">{countdown.formattedTime}</span>
-              </div>
-            )}
             
             <button
               onClick={handleRefresh}
@@ -290,7 +259,12 @@ const StatusMonitor: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
               )}
-              Refresh
+              <span>Refresh</span>
+              {autoRefresh && (
+                <span className="font-mono text-xs opacity-75">
+                  {countdown.formattedTime}
+                </span>
+              )}
             </button>
           </div>
         </div>
